@@ -73,6 +73,16 @@ public class Queue{
 	public void removeNull() {
 		queue.removeAll(Collections.singleton(null));
 	}
+	/**
+	 * metodo per rimuovere i nodi della coda
+	 * @param idxs: array di indici come righe della tabella
+	 */
+	public void removeNodes(int[] idxs) {
+		for(int i = 0; i < idxs.length; i++) {
+			queue.remove(idxs[i]);
+		}
+	}
+	
 	public Queue getQueue() {
 		return this;}
 	

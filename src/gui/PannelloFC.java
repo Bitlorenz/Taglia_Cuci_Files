@@ -133,8 +133,6 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 				modes = new String[inputFiles.length];
 				if(inputFiles.length==0 || type==null || modes.length==0 || attribute == -1)
 					System.err.println("file selezionati 0, errore nel tipo, nella modalità, nell'attributo");
-				dimChunk.setEditable(true);
-				partsChunk.setEditable(true);
 				//se c'è già una modalità selezionata ma nessun file era ancora nella coda allora tutti i file prendono quella modalità
 				if(divDim.isSelected() || divNum.isSelected() ||
 						divZip.isSelected() || divCrypt.isSelected())
@@ -159,7 +157,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 			setGeneralMode(null);
 			dimChunk.setEditable(false);
 			partsChunk.setEditable(false);
-			//mt.fireTableDataChanged();
+			pswdTxt.setEditable(false);
 			if(q != null && q.getSize() > 0 && q.getType() == null)
 				q.setType(getType());
 		}
@@ -206,16 +204,16 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		//esecuzione della coda dei jobs
 		if(e.getSource() == esegui) {
 			//inserire metodo che chiama l'esecuzione di tutti i lsvori sui nodi della coda
+			//controllo sul tipo di coda e file aggiunti (non devono essere presenti sia file da dividere che da unire)
 		}
-
-		/*rimuovo un file dalla coda di file e dalla tabella
+		//rimuovo un file dalla coda di file e dalla tabella
 		if(e.getSource()==rimuoviFile) {
 			if(q!=null && q.getSize()>0) {
 				int[] righe=tab.getSelectedRows();
-				q.rimuoviElementi(righe);
+				q.removeNodes(righe);
 				mt.fireTableDataChanged();
 			}
-		}*/
+		}
 	}
 	@Override
 	public void changedUpdate(DocumentEvent arg0) {}
