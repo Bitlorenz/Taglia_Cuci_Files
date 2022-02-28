@@ -8,10 +8,12 @@ import javax.crypto.CipherOutputStream;
 public class EncryptWriter extends Splitter{
 
 	private CryptoService cryptoService;
+	private String password;
 	private CipherOutputStream cos;
 	
 	public EncryptWriter(String absPathFile, long chunkSize, String splitMode,String password) throws Exception{
 		super(absPathFile, chunkSize, splitMode);
+		setPassword(password);
 		this.cryptoService = new CryptoService(password, absPathFile, "crypt");
 		//cryptChunks();
 	}
@@ -33,5 +35,12 @@ public class EncryptWriter extends Splitter{
 			fout.close();
 			new File(getDirDest().getAbsolutePath()+File.separator+chunkName).delete();
 		}	
+	}
+	private void setPassword(String password) {
+		this.password = password;
+	}
+	@Override
+	public String getPassword() {
+		return this.password;		
 	}
 }

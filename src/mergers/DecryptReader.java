@@ -38,7 +38,4 @@ public class DecryptReader extends Merger{
 			f.delete();
 		}
 	}
-	@Override
-	public boolean hasPassword() {
-		return true;}
 }

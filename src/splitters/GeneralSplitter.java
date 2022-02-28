@@ -86,6 +86,4 @@ public  abstract class GeneralSplitter implements INode, Runnable{
 	@Override
 	public abstract void run();
 
-	@Override
-	public boolean hasPassword() {return false;}
 }

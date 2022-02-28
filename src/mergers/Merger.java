@@ -60,10 +60,6 @@ public class Merger extends GeneralMerger{
 		return getChunksTot();}
 
 	@Override
-	public boolean hasPassword() {
-		return false;}
-
-	@Override
 	public void run() {
 		try {
 			mergeAllChunks();
@@ -102,5 +98,11 @@ public class Merger extends GeneralMerger{
 			setChunksTot(attribute);
 		else
 			setChunkSize(attribute);
+	}
+
+	@Override
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

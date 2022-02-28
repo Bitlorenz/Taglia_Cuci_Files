@@ -46,7 +46,6 @@ public class Queue{
 	public void addSplitNodes(File[] files, String[] mode, int attribute,
 			String passwd) throws Exception {
 		this.totFiles = files.length;
-		//queue.setSize(totFiles);
 		for(int i=0; i < totFiles; i++) {
 			if(mode[i].equals("zip"))
 				queue.add(i, new ZipWriter(files[i].getAbsolutePath(), attribute, mode[i]));
@@ -57,11 +56,6 @@ public class Queue{
 		}
 		removeNull();
 	}
-	
-	/*public void appendSplitNodes(File[] files, String[] mode, int attribute,
-			String passwd) throws Exception {
-		int newSize = getSize() + files.length;
-	}*/
 	
 	public void addMergeNodes(File[] files, String passwd) throws Exception {
 		for(int i=0; i < totFiles; i++) {
@@ -80,7 +74,22 @@ public class Queue{
 	public void removeNodes(int[] idxs) {
 		for(int i = 0; i < idxs.length; i++) {
 			queue.remove(idxs[i]);
+			for(int j = i; j < idxs.length; j++) 
+				idxs[j] -= 1;}		
+	}
+	
+	public void replaceNode(int idx, int attribute) throws Exception {
+		INode oldNode = getNode(idx);
+		String oldAbsPath = oldNode.getFileNode().getAbsolutePath();
+		String oldMode = getModeNode(idx);
+		INode newNode = null;
+		switch (oldMode) {
+		case "zip": newNode = new ZipWriter(oldAbsPath, attribute, oldMode);
+		case "crypt": newNode = new EncryptWriter(oldAbsPath, attribute, oldMode, oldNode.getPassword());
+		case "size": newNode = new Splitter(oldAbsPath, attribute, oldMode);
+		case "parts": newNode = new Splitter(oldAbsPath, attribute, oldMode);
 		}
+		queue.set(idx, newNode);			
 	}
 	
 	public Queue getQueue() {

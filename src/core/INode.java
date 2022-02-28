@@ -46,7 +46,7 @@ public interface INode{
 	
 	public boolean isZipped();
 	
-	public boolean hasPassword();
+	public String getPassword();
 	public void setAttribute(int attribute);
 
 }

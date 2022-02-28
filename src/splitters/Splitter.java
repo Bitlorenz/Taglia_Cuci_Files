@@ -110,8 +110,11 @@ public class Splitter extends GeneralSplitter{
 	public String getNameNode() {
 		return getNameFileSrc();}
 	@Override
-	public void setAttribute(int attribute) {
+	public void setAttribute(int attribute) {}
+	@Override
+	public String getPassword() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
+	
 }

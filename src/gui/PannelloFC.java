@@ -26,7 +26,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 	private ModelloTab mt;
 	private Queue q;
 	//type è la tipologia di coda, generalMode è la modalità quando non ci sono file nella coda
-	private String sizeChunks, partsChunks, type, generalMode;
+	private String sizeChunks, totPartsChunk, type, generalMode;
 	//stringa che rappresenta la password, va inserita in un text field
 	private String password;
 	private String[] modes; // array di stringhe che tiene le modalità di divisione ordinate per i nodi, da passare alla q
@@ -137,8 +137,8 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 				if(divDim.isSelected() || divNum.isSelected() ||
 						divZip.isSelected() || divCrypt.isSelected())
 					generalModeToModes(inputFiles.length);
-				//se c'è già un attributo selezionato ma nessun file era ancora nella coda allora tutti i file prendono quell attributo
-				if(dimChunk.getText() != null || partsChunk.getText() != null)
+				//se c'è già un attributo indicato ma nessun file era ancora nella coda allora tutti i file prendono quell attributo
+				if(dimChunk.isEnabled() || partsChunk.isEnabled())
 					attToAtts(inputFiles.length);
 				try {
 					if(getType().equals("Dividi"))
@@ -165,7 +165,9 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		//AGGIUNGERE PSWDSETEDITABLEFALSE
 		if(e.getSource() == divDim) {
 			setType("Dividi");
+			dimChunk.setEnabled(true);
 			dimChunk.setEditable(true);
+			partsChunk.setEnabled(false);
 			partsChunk.setEditable(false);
 			setGeneralMode("size");
 			setModes(null);
@@ -173,7 +175,9 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		//radioButton per dividere i file per numero
 		if(e.getSource() == divNum) {
 			setType("Dividi");
+			dimChunk.setEnabled(false);
 			dimChunk.setEditable(false);
+			partsChunk.setEnabled(true);
 			partsChunk.setEditable(true);
 			setGeneralMode("parts");
 			setModes(null);
@@ -181,7 +185,9 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		//radioButton per dividere i file per dim con zip
 		if(e.getSource() == divZip) {
 			setType("Dividi");
+			dimChunk.setEnabled(true);
 			dimChunk.setEditable(true);
+			partsChunk.setEnabled(false);
 			partsChunk.setEditable(false);
 			setGeneralMode("zip");
 			setModes(null);	
@@ -190,7 +196,9 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		//TO-DO: IMPLEMENTARE RECUPERO PASSWORD
 		if(e.getSource() == divCrypt) {
 			setType("Dividi");
+			dimChunk.setEnabled(true);
 			dimChunk.setEditable(true);
+			partsChunk.setEnabled(false);
 			partsChunk.setEditable(false);
 			pswdTxt.setEditable(true);
 			setGeneralMode("crypt");
@@ -206,18 +214,33 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 			//inserire metodo che chiama l'esecuzione di tutti i lsvori sui nodi della coda
 			//controllo sul tipo di coda e file aggiunti (non devono essere presenti sia file da dividere che da unire)
 		}
+		//modifica i parametri dei nodi
+		if(e.getSource() == modificaFile) {
+			if(q != null && q.getSize() > 0) {
+				int rowIdx = tab.getSelectedRow();
+				int newAttribute = 0;
+				if(dimChunk.isEnabled()) 
+					newAttribute = Integer.parseInt(dimChunk.getText());
+				else if (partsChunk.isEnabled()) 
+					newAttribute = Integer.parseInt(partsChunk.getText());
+				try {
+					q.replaceNode(rowIdx, newAttribute);
+				} catch (Exception e1) {
+					e1.printStackTrace();}
+				mt.fireTableDataChanged();
+			}
+		}
+		
 		//rimuovo un file dalla coda di file e dalla tabella
 		if(e.getSource()==rimuoviFile) {
 			if(q!=null && q.getSize()>0) {
-				int[] righe=tab.getSelectedRows();
-				q.removeNodes(righe);
-				mt.fireTableDataChanged();
-			}
+				int[] rows=tab.getSelectedRows();
+				q.removeNodes(rows);
+				mt.fireTableDataChanged();}
 		}
 	}
 	@Override
 	public void changedUpdate(DocumentEvent arg0) {}
-	//si riferisce all'oggetto dimChunk
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 		Object owner = e.getDocument().getProperty("panel");
@@ -226,8 +249,8 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 			if(!dimChunk.getText().equals(""))
 				setAttribute(Integer.parseInt(dimChunk.getText()));}
 		else if(owner == partsChunk) {
-				setPartsChunks(partsChunk.getText());
-			if(!dimChunk.getText().equals(""))
+				setTotPartsChunk(partsChunk.getText());
+			if(!partsChunk.getText().equals(""))
 				setAttribute(Integer.parseInt(partsChunk.getText()));}
 		else if(owner == pswdTxt) {
 			if(!pswdTxt.getText().equals(""))
@@ -247,7 +270,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 			if(!dimChunk.getText().equals(""))
 				setAttribute(Integer.parseInt(dimChunk.getText()));}
 		else if(owner == partsChunk) {
-				setPartsChunks(partsChunk.getText());
+				setTotPartsChunk(partsChunk.getText());
 			if(!dimChunk.getText().equals(""))
 				setAttribute(Integer.parseInt(partsChunk.getText()));}
 		else if(owner == pswdTxt) {
@@ -295,11 +318,11 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 			modes[i] = generalMode;
 	}
 
-	public String getPartsChunks() {
-		return partsChunks;}
+	public String getTotPartsChunk() {
+		return totPartsChunk;}
 
-	public void setPartsChunks(String partsChunks) {
-		this.partsChunks = partsChunks;}
+	public void setTotPartsChunk(String partsChunks) {
+		this.totPartsChunk = partsChunks;}
 
 	public String getSizeChunks() {
 		return sizeChunks;}
