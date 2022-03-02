@@ -18,7 +18,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 
 	private JTextField dimChunk, partsChunk, pswdTxt;
 	private JButton scegliFile, modificaFile, rimuoviFile;
-	private JButton esegui, stampaFile;
+	private JButton esegui;
 	private JLabel dimLabel, numLabel, pswdLabel;
 	private JRadioButton unisci, divDim, divNum, divZip, divCrypt;
 	private JFileChooser fileChooser;
@@ -103,10 +103,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		add(southPanel, BorderLayout.SOUTH);
 		esegui = new JButton("Esegui");
 		esegui.addActionListener(this);
-		stampaFile= new JButton("Elenca!");
-		stampaFile.addActionListener(this);
 		southPanel.add(esegui);
-		southPanel.add(stampaFile);
 		
 		JPanel eastPanel= new JPanel();
 		add(eastPanel, BorderLayout.EAST);
@@ -158,9 +155,9 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 			setGeneralMode(null);
 			dimChunk.setEditable(false);
 			partsChunk.setEditable(false);
-			pswdTxt.setEditable(false);
+			pswdTxt.setEditable(true);
 			if(q != null && q.getSize() > 0 && q.getType() == null)
-				q.setType(getType());
+				q.setType(this.getType());
 		}
 		//radioButton per dividere i file per dimensione
 		//AGGIUNGERE PSWDSETEDITABLEFALSE
@@ -205,15 +202,11 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 			setGeneralMode("crypt");
 			setModes(null);
 		}
-		//stampare i file scelti, aggiungere tutte le caratteristiche
-		if(e.getSource() == stampaFile) {
-				for(int i=0; i < q.getSize(); i++)
-	            	System.out.println(q.getNameNode(i));
-		}
 		//esecuzione della coda dei jobs
 		if(e.getSource() == esegui) {
-			if(q != null && q.getSize() > 0) 
+			if(q != null && q.getSize() > 0) {
 				q.runAll();
+				mt.fireTableDataChanged();}
 		}
 		//modifica i parametri dei nodi
 		if(e.getSource() == modificaFile) {

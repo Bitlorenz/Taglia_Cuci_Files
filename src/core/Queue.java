@@ -58,8 +58,9 @@ public class Queue{
 	}
 	
 	public void addMergeNodes(File[] files, String passwd) throws Exception {
+		this.totFiles = files.length;
 		for(int i=0; i < totFiles; i++) {
-				queue.add(i, new Merger(files[i].getName(), passwd));
+				queue.add(i, new Merger(files[i].getAbsolutePath(), passwd));
 		}
 		removeNull();
 	}
@@ -144,7 +145,9 @@ public class Queue{
 			nodeJobs[i] = new Thread((Runnable) getNode(i));
 			//aggiungere controlli percentuale
 		}
-		for(int i = 0; i < getSize(); i++)
+		int i;
+		for(i = 0; i < getSize(); i++)
 			nodeJobs[i].start();
+		queue.removeAllElements();
 	}
 }

@@ -9,8 +9,6 @@ import core.INode;
 public abstract class GeneralMerger implements INode, Runnable {
 	/**chunksTot: numero di chunks totali, userInput in modalità parts*/
 	private int chunksTot;
-	/**numChunksInt: numero di chunks interi*/
-	private int numChunksInt;
 	/**chunkSize: dimensione di ogni chunk, userInput in modalità size*/
 	private long chunkSize, chunkSizeResto, fileSrcSize;
 	/**dirDst: puntatore alla cartella in cui sono i chunks*/
@@ -24,14 +22,12 @@ public abstract class GeneralMerger implements INode, Runnable {
 	/**mode: modalità di splitting scelta dall'utente*/
 	private String mode, password;
 
-	public GeneralMerger(String nameFirstFile, String password) throws Exception {
-		this.fileSrc = getFileNode();
+	public GeneralMerger(String absPathChunk, String password) throws Exception {
+		this.setAbsPathFirstFile(absPathChunk);
+		this.fileSrc = new File(absPathChunk);
+		this.setDirDest(this.fileSrc.getParentFile());
 		this.setNameFirstFile(this.fileSrc.getName());
-		this.setAbsPathFirstFile(this.fileSrc.getAbsolutePath());
-		this.setNameDst(nameFirstFile.substring(nameFirstFile.indexOf('-')));
-		this.setDirDest(new File(absPathFirstFile.substring
-				(0, absPathFirstFile.lastIndexOf(File.separator))));
-		this.setInfoChunk(new File(getDirDest().getAbsolutePath()+File.separator
+		this.setInfoChunk(new File(this.dirDest.getAbsolutePath()+File.separator
 				+".infochunk"));
 		retriveInfo();
 		fileDst = new File(getDirDest().getAbsolutePath()+File.separatorChar+

@@ -25,7 +25,7 @@ public  abstract class GeneralSplitter implements INode, Runnable{
 	public GeneralSplitter(String absPathFile, long userInput, String splitMode) {
 		setNameFileSrc(absPathFile.substring(absPathFile.lastIndexOf(File.separator)+1));
 		setAbsPathFileSrc(absPathFile.substring(0, absPathFile.lastIndexOf(File.separator)));
-		setDirDest(new File(getAbsPathFileSrc()+File.separator+"dirDest"));
+		setDirDest(new File(getAbsPathFileSrc()+File.separator+"dir"+getNameFileSrc()));
 		fileSrc = new File(absPathFile);
 		setMode(splitMode);
 		if(mode.equals("size") || mode.equals("zip") || mode.equals("crypt")){

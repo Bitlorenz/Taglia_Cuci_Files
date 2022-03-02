@@ -10,8 +10,8 @@ public class Merger extends GeneralMerger{
 	
 	private OutputStream os;
 
-	public Merger(String firstChunkName, String password) throws Exception {
-		super(firstChunkName, password);
+	public Merger(String absPathChunk, String password) throws Exception {
+		super(absPathChunk, password);
 	}
 
 	/**metodo che unisce i chunks in un unico file
