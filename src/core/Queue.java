@@ -136,4 +136,15 @@ public class Queue{
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	public void runAll() {
+		//creo un thread per ogni job
+		Thread nodeJobs[] = new Thread[getSize()];
+		for(int i = 0; i < getSize(); i++) {
+			nodeJobs[i] = new Thread((Runnable) getNode(i));
+			//aggiungere controlli percentuale
+		}
+		for(int i = 0; i < getSize(); i++)
+			nodeJobs[i].start();
+	}
 }

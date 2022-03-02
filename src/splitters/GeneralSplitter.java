@@ -57,7 +57,9 @@ public  abstract class GeneralSplitter implements INode, Runnable{
 
 	public File getDirDest() {return dirDest;}
 
-	public void setDirDest(File dirDest) {this.dirDest = dirDest;}
+	public void setDirDest(File dirDest) {
+		if(dirDest.mkdir())		
+			this.dirDest = dirDest;}
 
 	public String getNameFileSrc() {return nameFileSrc;}
 

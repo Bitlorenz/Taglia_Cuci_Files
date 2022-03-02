@@ -102,6 +102,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		JPanel southPanel= new JPanel();
 		add(southPanel, BorderLayout.SOUTH);
 		esegui = new JButton("Esegui");
+		esegui.addActionListener(this);
 		stampaFile= new JButton("Elenca!");
 		stampaFile.addActionListener(this);
 		southPanel.add(esegui);
@@ -211,8 +212,8 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		}
 		//esecuzione della coda dei jobs
 		if(e.getSource() == esegui) {
-			//inserire metodo che chiama l'esecuzione di tutti i lsvori sui nodi della coda
-			//controllo sul tipo di coda e file aggiunti (non devono essere presenti sia file da dividere che da unire)
+			if(q != null && q.getSize() > 0) 
+				q.runAll();
 		}
 		//modifica i parametri dei nodi
 		if(e.getSource() == modificaFile) {
@@ -230,7 +231,6 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 				mt.fireTableDataChanged();
 			}
 		}
-		
 		//rimuovo un file dalla coda di file e dalla tabella
 		if(e.getSource()==rimuoviFile) {
 			if(q!=null && q.getSize()>0) {
