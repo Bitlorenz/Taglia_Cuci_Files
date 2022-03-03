@@ -19,7 +19,7 @@ public class ZipReader extends Merger{
 		String chunkName = getNameFirstFile();
 		int totChunks =(int) getChunksTot();
 		for(i = 1; i <= totChunks; i++ ) {
-			String idxChunk = i+chunkName.substring(chunkName.indexOf('-'));
+			String idxChunk = i+chunkName.substring(chunkName.indexOf("-"));
 			File chunkZip = new File(getDirDest().getAbsolutePath()+File.separator+idxChunk);
 			FileInputStream fis = new FileInputStream(chunkZip);
 			zis = new ZipInputStream(fis);

@@ -18,8 +18,14 @@ public class Merger extends GeneralMerger{
 	 * TO-DO: aggiungere lettura del resto(?)*/
 	public void readWriteChunk(InputStream is, OutputStream os) throws Exception{
 		this.setOs(os);
-		int chunkSizeInt = (int) getChunkSize();
-		byte[] byteLetti = new byte[chunkSizeInt];
+		int chunkSizeInt;
+		byte[] byteLetti = null;
+		if(getMode().equals("crypt")) {
+			chunkSizeInt = is.available();
+			byteLetti = new byte[chunkSizeInt];
+		}else {
+			chunkSizeInt = (int) getChunkSize();
+			byteLetti = new byte[chunkSizeInt];}
 		int val=0;
 		val = is.read(byteLetti);
 		if(val > 0) {
