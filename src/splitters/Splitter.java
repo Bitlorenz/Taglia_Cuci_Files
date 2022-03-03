@@ -35,18 +35,15 @@ public class Splitter extends GeneralSplitter{
 	private void setInputStream(InputStream inputStream) {
 		this.is =inputStream;
 	}
-	
-	/**
-	 * splitInChunks: metodo per dividere il file in piccole parti
-	 * @throws Exception
-	 */
+	/**splitInChunks: metodo per dividere il file in piccole parti
+	 * @throws Exception*/
 	public void splitInChunks() throws Exception {
 		int i = 0;
 		FileInputStream fis = new FileInputStream(getFileSrc());
 		long totChunks = getChunksTot();
 		makeInfoChunk();
 		for(i = 1; i < totChunks; i++) {
-			String chunkName = i+'-'+getNameFileSrc();
+			String chunkName = i+"-"+getNameFileSrc();
 			File chunk = new File(getDirDest().getAbsolutePath()+File.separator+chunkName);
 			FileOutputStream fout = new FileOutputStream(chunk);
 			readWriteChunk(fis, fout, i);
@@ -54,8 +51,7 @@ public class Splitter extends GeneralSplitter{
 		}
 		//getFileSrc().delete();
 	}
-	/**
-	 * metodo che crea il file contenente le informazioni della divisione
+	/**metodo che crea il file contenente le informazioni della divisione
 	 * utile per riunire tutti i chunks, il file è nascosto*/
 	private void makeInfoChunk() throws Exception{
 		String nameInfoChunk = ".infochunk";
@@ -113,8 +109,6 @@ public class Splitter extends GeneralSplitter{
 	public void setAttribute(int attribute) {}
 	@Override
 	public String getPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		return null;}
 	
 }

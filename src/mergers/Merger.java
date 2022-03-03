@@ -28,18 +28,20 @@ public class Merger extends GeneralMerger{
 	
 	public void mergeAllChunks() throws Exception{
 		int i = 0;
+		String chunkName = getChunkName();
+		if(getMode().equals("zip"))
+			chunkName.concat(".zip");
+		if(getMode().equals("crypt"))
+			chunkName.concat(".des");
 		FileOutputStream fos = new FileOutputStream(getFileDst());
 		int totChunks = (int) getChunksTot();
 		for( i = 1; i < totChunks; i++) {
-			String chunkName = i+getNameFirstFile().substring
-					(getNameFirstFile().indexOf('-'), getNameFirstFile().lastIndexOf(".zip"));
-			File chunkUnzip = new File(getDirDest().getAbsolutePath()+File.separator+chunkName);
-			FileInputStream fis = new FileInputStream(chunkUnzip);
+			String idxChunk = i+"-"+chunkName;
+			File chunk = new File(getDirDest().getAbsolutePath()+File.separator+idxChunk);
+			FileInputStream fis = new FileInputStream(chunk);
 			readWriteChunk(fis, fos, i);
-			System.out.println("merge chunk: "+chunkUnzip.getName()+" su "+ getChunksTot());
 			fis.close();
-			chunkUnzip.delete();
-		}
+			chunk.delete();}
 		fos.close();
 		File dirDest = getDirDest();
 		dirDest.delete();
@@ -68,29 +70,16 @@ public class Merger extends GeneralMerger{
 	}
 
 	@Override
-	public String getMode() {
-		return null;}
-
-	@Override
-	public int getAttribute() {
-		return 0;}
-
-	@Override
 	public boolean isCrypted() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+		return false;}
 
 	@Override
 	public boolean isZipped() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+		return false;}
 
 	@Override
 	public String getNameNode() {
-		return getNameFirstFile();
-	}
+		return getNameFirstFile();}
 
 	@Override
 	public void setAttribute(int attribute) {
@@ -102,7 +91,11 @@ public class Merger extends GeneralMerger{
 
 	@Override
 	public String getPassword() {
+		return null;}
+
+	@Override
+	public int getAttribute() {
 		// TODO Auto-generated method stub
-		return null;
+		return 0;
 	}
 }

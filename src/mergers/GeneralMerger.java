@@ -12,12 +12,12 @@ public abstract class GeneralMerger implements INode, Runnable {
 	/**chunkSize: dimensione di ogni chunk, userInput in modalità size*/
 	private long chunkSize, chunkSizeResto, fileSrcSize;
 	/**dirDst: puntatore alla cartella in cui sono i chunks*/
-	private File dirDest;
+	private File dirSrc;
 	/**fileSrc: file Sorgente, fileDst: file Destinazione,
 	 *infoChunk: file con le info su divisione*/
 	private File fileSrc, fileDst, infoChunk;
 	/**nomeFile: nome del file in input*/
-	private String nameFirstFile, absPathFirstFile;
+	private String nameFirstFile, absPathFirstFile, chunkName;
 	private String nameDst;
 	/**mode: modalità di splitting scelta dall'utente*/
 	private String mode, password;
@@ -27,7 +27,7 @@ public abstract class GeneralMerger implements INode, Runnable {
 		this.fileSrc = new File(absPathChunk);
 		this.setDirDest(this.fileSrc.getParentFile());
 		this.setNameFirstFile(this.fileSrc.getName());
-		this.setInfoChunk(new File(this.dirDest.getAbsolutePath()+File.separator
+		this.setInfoChunk(new File(this.dirSrc.getAbsolutePath()+File.separator
 				+".infochunk"));
 		retriveInfo();
 		fileDst = new File(getDirDest().getAbsolutePath()+File.separatorChar+
@@ -40,9 +40,10 @@ public abstract class GeneralMerger implements INode, Runnable {
 		FileReader fr = new FileReader(getInfoChunk());
 		BufferedReader br = new BufferedReader(fr);
 		setNameDst(br.readLine());
-		String modeSrc = br.readLine();
+		setMode(br.readLine());
 		setChunksTot(Integer.parseInt(br.readLine()));
 		setChunkSize(Long.parseLong(br.readLine()));
+		setChunkName(getNameDst());
 		fileSrcSize = Long.parseLong(br.readLine());
 		setChunkSizeResto(Long.parseLong(br.readLine()));
 		br.close();
@@ -85,16 +86,32 @@ public abstract class GeneralMerger implements INode, Runnable {
 		this.chunkSizeResto = chunkSizeResto;}
 
 	public File getDirDest() {
-		return dirDest;}
+		return dirSrc;}
 
 	public void setDirDest(File dirDest) {
-		this.dirDest = dirDest;}
+		this.dirSrc = dirDest;}
 
 	public File getFileDst() {
 		return fileDst;}
 
 	public void setFileDst(File fileDst) {
 		this.fileDst = fileDst;}
+
+	public String getMode() {
+		return mode;
+	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
+	}
+
+	public String getChunkName() {
+		return chunkName;
+	}
+
+	public void setChunkName(String chunkName) {
+		this.chunkName = chunkName;
+	}
 
 	public File getInfoChunk() {
 		return infoChunk;}

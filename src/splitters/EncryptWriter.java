@@ -15,14 +15,13 @@ public class EncryptWriter extends Splitter{
 		super(absPathFile, chunkSize, splitMode);
 		setPassword(password);
 		this.cryptoService = new CryptoService(password, absPathFile, "crypt");
-		//cryptChunks();
 	}
 
 	public void cryptChunks() throws Exception{
 		int i;
 		long totChunks = getChunksTot();
-		for(i = 0; i < totChunks; i++) {
-			String chunkName = i+getNameFileSrc();
+		for(i = 1; i < totChunks; i++) {
+			String chunkName = i+"-"+getNameFileSrc();
 			File chunkCrypted = new File(getDirDest().getAbsolutePath()+File.separator+chunkName+".des");
 			FileOutputStream fout = new FileOutputStream(chunkCrypted);
 			cos = cryptoService.getCos(fout);
@@ -42,5 +41,13 @@ public class EncryptWriter extends Splitter{
 	@Override
 	public String getPassword() {
 		return this.password;		
+	}
+	@Override
+	public void run() {
+		super.run();
+		try {
+			cryptChunks();
+		} catch (Exception e) {
+			e.printStackTrace();}
 	}
 }

@@ -17,19 +17,15 @@ public class ZipWriter extends Splitter {
 	private ZipOutputStream zos;
 	
 	public ZipWriter(String absPathFile, long chunkSize, String splitMode) throws Exception{
-		super(absPathFile, chunkSize, splitMode);
-		//run();
-	}
+		super(absPathFile, chunkSize, splitMode);}
 
-/**
- * zipChunk: metodo per zippare ogni parte in cui è stato diviso il file
- * @throws Exception
- */
+/**zipChunk: metodo per zippare ogni parte in cui è stato diviso il file
+ * @throws Exception*/
 	private void zipChunk() throws Exception{
 		int i;
 		long totChunks = getChunksTot();
-		for(i = 0; i < totChunks; i++) {
-			String chunkName = i+'-'+getNameFileSrc();
+		for(i = 1; i < totChunks; i++) {
+			String chunkName = i+"-"+getNameFileSrc();
 			File chunkZipped = new File(getDirDest().getAbsolutePath()+File.separator+chunkName+".zip");
 			FileOutputStream fos = new FileOutputStream(chunkZipped);
 			zos = new ZipOutputStream(fos);
@@ -43,8 +39,7 @@ public class ZipWriter extends Splitter {
 			zos.closeEntry();
 			zos.close();
 			fos.close();
-			new File(getDirDest().getAbsolutePath()+File.separator+chunkName).delete();
-		}
+			new File(getDirDest().getAbsolutePath()+File.separator+chunkName).delete();}
 	}
 	
 	@Override
