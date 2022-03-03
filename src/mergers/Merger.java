@@ -16,9 +16,9 @@ public class Merger extends GeneralMerger{
 
 	/**metodo che unisce i chunks in un unico file
 	 * TO-DO: aggiungere lettura del resto(?)*/
-	public void readWriteChunk(InputStream is, OutputStream os, int i) throws Exception{
+	public void readWriteChunk(InputStream is, OutputStream os) throws Exception{
 		this.setOs(os);
-		int chunkSizeInt = is.available();
+		int chunkSizeInt = (int) getChunkSize();
 		byte[] byteLetti = new byte[chunkSizeInt];
 		int val=0;
 		val = is.read(byteLetti);
@@ -29,17 +29,13 @@ public class Merger extends GeneralMerger{
 	public void mergeAllChunks() throws Exception{
 		int i = 0;
 		String chunkName = getChunkName();
-		if(getMode().equals("zip"))
-			chunkName.concat(".zip");
-		if(getMode().equals("crypt"))
-			chunkName.concat(".des");
 		FileOutputStream fos = new FileOutputStream(getFileDst());
 		int totChunks = (int) getChunksTot();
-		for( i = 1; i < totChunks; i++) {
+		for( i = 1; i <= totChunks; i++) {
 			String idxChunk = i+"-"+chunkName;
 			File chunk = new File(getDirDest().getAbsolutePath()+File.separator+idxChunk);
 			FileInputStream fis = new FileInputStream(chunk);
-			readWriteChunk(fis, fos, i);
+			readWriteChunk(fis, fos);
 			fis.close();
 			chunk.delete();}
 		fos.close();

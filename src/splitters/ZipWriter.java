@@ -24,7 +24,7 @@ public class ZipWriter extends Splitter {
 	private void zipChunk() throws Exception{
 		int i;
 		long totChunks = getChunksTot();
-		for(i = 1; i < totChunks; i++) {
+		for(i = 1; i <= totChunks; i++) {
 			String chunkName = i+"-"+getNameFileSrc();
 			File chunkZipped = new File(getDirDest().getAbsolutePath()+File.separator+chunkName+".zip");
 			FileOutputStream fos = new FileOutputStream(chunkZipped);

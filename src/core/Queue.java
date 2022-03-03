@@ -61,6 +61,14 @@ public class Queue{
 		this.totFiles = files.length;
 		for(int i=0; i < totFiles; i++) {
 				queue.add(i, new Merger(files[i].getAbsolutePath(), passwd));
+				if(getNode(i).getMode().equals("crypt")) {
+					INode newNode = new DecryptReader(files[i].getAbsolutePath(), passwd);
+					queue.set(i, newNode);
+				}else if(getNode(i).getMode().equals("zip")) {
+					INode newNode = new ZipReader(files[i].getAbsolutePath());
+					queue.set(i, newNode);
+				}
+					
 		}
 		removeNull();
 	}

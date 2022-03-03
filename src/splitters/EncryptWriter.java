@@ -20,7 +20,7 @@ public class EncryptWriter extends Splitter{
 	public void cryptChunks() throws Exception{
 		int i;
 		long totChunks = getChunksTot();
-		for(i = 1; i < totChunks; i++) {
+		for(i = 1; i <= totChunks; i++) {
 			String chunkName = i+"-"+getNameFileSrc();
 			File chunkCrypted = new File(getDirDest().getAbsolutePath()+File.separator+chunkName+".des");
 			FileOutputStream fout = new FileOutputStream(chunkCrypted);

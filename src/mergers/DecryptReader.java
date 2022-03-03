@@ -16,14 +16,14 @@ public class DecryptReader extends Merger{
 			throws Exception{
 		super(firstChunkName, password);
 		this.firstChunkName = firstChunkName;
-		this.fileNameDest = firstChunkName.substring(firstChunkName.lastIndexOf('-'), firstChunkName.indexOf(".des"));
+		this.fileNameDest = firstChunkName.substring(firstChunkName.lastIndexOf("-"), firstChunkName.indexOf(".des"));
 		this.cryptoService = new CryptoService(password, fileNameDest, "decrypt");
 	}
 
 	public void decryptChunk() throws Exception {
 		int i;
 		int totChunks = (int) getChunksTot();
-		for(i = 0; i < totChunks; i++) {
+		for(i = 0; i <= totChunks; i++) {
 			String chunkName = i+firstChunkName.substring(firstChunkName.indexOf('-'));
 			File f = new File(getDirDest().getAbsolutePath()+File.separator+chunkName);
 			FileInputStream fis = new FileInputStream(f);
@@ -31,11 +31,20 @@ public class DecryptReader extends Merger{
 			File fDecr = new File(getDirDest().getAbsolutePath()+File.separator+decryptChunkName);
 			FileOutputStream fosDecr = new FileOutputStream(fDecr);
 			cos = cryptoService.getCos(fosDecr);
-			readWriteChunk(fis, cos, i);
+			readWriteChunk(fis, cos);
 			fis.close();
 			cos.flush();
 			cos.close();
 			f.delete();
-		}
+		}		
+	}
+
+	@Override
+	public void run() {
+		try {
+			decryptChunk();
+			super.run();
+		}catch(Exception e) {
+			e.printStackTrace();}
 	}
 }

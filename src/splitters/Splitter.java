@@ -42,7 +42,7 @@ public class Splitter extends GeneralSplitter{
 		FileInputStream fis = new FileInputStream(getFileSrc());
 		long totChunks = getChunksTot();
 		makeInfoChunk();
-		for(i = 1; i < totChunks; i++) {
+		for(i = 1; i <= totChunks; i++) {
 			String chunkName = i+"-"+getNameFileSrc();
 			File chunk = new File(getDirDest().getAbsolutePath()+File.separator+chunkName);
 			FileOutputStream fout = new FileOutputStream(chunk);
