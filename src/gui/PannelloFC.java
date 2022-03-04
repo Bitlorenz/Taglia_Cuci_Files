@@ -8,6 +8,7 @@ import javax.swing.table.TableColumn;
 import core.Queue;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.io.File;
@@ -22,6 +23,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 	private JLabel dimLabel, numLabel, pswdLabel;
 	private JRadioButton unisci, divDim, divNum, divZip, divCrypt;
 	private JFileChooser fileChooser;
+	private JProgressBar progressBar;
 	private JTable tab;
 	private ModelloTab mt;
 	private Queue q;
@@ -33,6 +35,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 	private File[] inputFiles;
 	private int attribute;//dimChunk o partsChunk a seconda della modalità per singolo nodo
 	private int[] attributes;
+	private int globalValue;
 	private boolean stepNum;
 	private boolean stepSize;
 	
@@ -42,7 +45,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 
 		JPanel centerPanel= new JPanel();
 		add(centerPanel, BorderLayout.CENTER);
-		q = new Queue();//inizializzo una coda vuota
+		q = new Queue(this);//inizializzo una coda vuota
 		mt= new ModelloTab(q);
 		tab= new JTable(mt);
 		tab.setRowSelectionAllowed(true);
@@ -103,7 +106,13 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		add(southPanel, BorderLayout.SOUTH);
 		esegui = new JButton("Esegui");
 		esegui.addActionListener(this);
+		globalValue = 0;
+		progressBar = new JProgressBar(globalValue, 100);
+		progressBar.setStringPainted(true);
+		progressBar.setBackground(Color.BLACK);
+		progressBar.setForeground(Color.GREEN);
 		southPanel.add(esegui);
+		southPanel.add(progressBar);
 		
 		JPanel eastPanel= new JPanel();
 		add(eastPanel, BorderLayout.EAST);
@@ -205,6 +214,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		//esecuzione della coda dei jobs
 		if(e.getSource() == esegui) {
 			if(q != null && q.getSize() > 0) {
+				progressBar.setValue(0);
 				q.runAll();
 				mt.fireTableDataChanged();}
 		}
@@ -323,6 +333,16 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 	public void setSizeChunks(String sizeChunks) {
 		this.sizeChunks = sizeChunks;}
 
+	public JProgressBar getProgressBar() {
+		return progressBar;}
+
+	public void setProgressBar(JProgressBar progressBar) {
+		this.progressBar = progressBar;}
+	
+	public synchronized void increaseValue(int value) {
+		progressBar.setValue(progressBar.getValue() + value);
+	}
+
 	public String getType() {
 		return type;}
 
@@ -363,5 +383,13 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 
 	public void setAttributes(int[] attributes) {
 		this.attributes = attributes;
+	}
+
+	public synchronized int getGlobalValue() {
+		return globalValue;
+	}
+
+	public synchronized void setGlobalValue(int globalValue) {
+		this.globalValue = globalValue;
 	}
 }

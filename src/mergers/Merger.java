@@ -69,6 +69,7 @@ public class Merger extends GeneralMerger{
 			mergeAllChunks();
 		}catch(Exception e) {
 			e.printStackTrace();}
+		runDone();
 	}
 
 	@Override
@@ -97,7 +98,10 @@ public class Merger extends GeneralMerger{
 
 	@Override
 	public int getAttribute() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public boolean runDone() {
+		return true;}
 }

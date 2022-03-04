@@ -42,6 +42,8 @@ public interface INode{
 	/**metodo che imposta l'attributo di divisione di un nodo
 	 * può essere la dimensione o il numero di nodi*/
 	
+	public boolean runDone();
+	
 	public boolean isCrypted();
 	
 	public boolean isZipped();

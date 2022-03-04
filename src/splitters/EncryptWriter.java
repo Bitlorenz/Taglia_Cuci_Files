@@ -5,16 +5,21 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import javax.crypto.CipherOutputStream;
 
+import gui.PannelloFC;
+
 public class EncryptWriter extends Splitter{
 
 	private CryptoService cryptoService;
 	private String password;
 	private CipherOutputStream cos;
+	private PannelloFC p;
 	
-	public EncryptWriter(String absPathFile, long chunkSize, String splitMode,String password) throws Exception{
-		super(absPathFile, chunkSize, splitMode);
+	public EncryptWriter(String absPathFile, long chunkSize, String splitMode,
+			String password, PannelloFC p) throws Exception{
+		super(absPathFile, chunkSize, splitMode, p);
 		setPassword(password);
 		this.cryptoService = new CryptoService(password, absPathFile, "crypt");
+		this.p = p;
 	}
 
 	public void cryptChunks() throws Exception{
@@ -44,10 +49,16 @@ public class EncryptWriter extends Splitter{
 	}
 	@Override
 	public void run() {
+		synchronized(this) {
+		int oldGV = p.getGlobalValue();
+		p.setGlobalValue(p.getGlobalValue()/2);
 		super.run();
 		try {
 			cryptChunks();
 		} catch (Exception e) {
 			e.printStackTrace();}
+		p.increaseValue(p.getGlobalValue());
+		p.setGlobalValue(oldGV);
+		}
 	}
 }

@@ -4,16 +4,19 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Vector;
 
+import gui.PannelloFC;
 import splitters.*;
 import mergers.*;
 
 public class Queue{
 	protected Vector<INode> queue;
 	private String type;
+	private PannelloFC p;
 	private int totFiles;
 	//metodo costruttore per inizializzare un oggetto coda vuoto 
-	public Queue() {
+	public Queue(PannelloFC pannelloFC) {
 		queue = new Vector<INode>(0);
+		p = pannelloFC;
 	}
 	
 	/**
@@ -48,11 +51,11 @@ public class Queue{
 		this.totFiles = files.length;
 		for(int i=0; i < totFiles; i++) {
 			if(mode[i].equals("zip"))
-				queue.add(i, new ZipWriter(files[i].getAbsolutePath(), attribute, mode[i]));
+				queue.add(i, new ZipWriter(files[i].getAbsolutePath(), attribute, mode[i], p));
 			else if(mode[i].equals("crypt"))
-				queue.add(i, new EncryptWriter(files[i].getAbsolutePath(), attribute, mode[i], passwd));
+				queue.add(i, new EncryptWriter(files[i].getAbsolutePath(), attribute, mode[i], passwd, p));
 			else if(mode[i].equals("size") || mode[i].equals("parts"))
-				queue.add(i, new Splitter(files[i].getAbsolutePath(), attribute, mode[i]));
+				queue.add(i, new Splitter(files[i].getAbsolutePath(), attribute, mode[i], p));
 		}
 		removeNull();
 	}
@@ -68,7 +71,6 @@ public class Queue{
 					INode newNode = new ZipReader(files[i].getAbsolutePath());
 					queue.set(i, newNode);
 				}
-					
 		}
 		removeNull();
 	}
@@ -93,10 +95,10 @@ public class Queue{
 		String oldMode = getModeNode(idx);
 		INode newNode = null;
 		switch (oldMode) {
-		case "zip": newNode = new ZipWriter(oldAbsPath, attribute, oldMode);
-		case "crypt": newNode = new EncryptWriter(oldAbsPath, attribute, oldMode, oldNode.getPassword());
-		case "size": newNode = new Splitter(oldAbsPath, attribute, oldMode);
-		case "parts": newNode = new Splitter(oldAbsPath, attribute, oldMode);
+		case "zip": newNode = new ZipWriter(oldAbsPath, attribute, oldMode, p);
+		case "crypt": newNode = new EncryptWriter(oldAbsPath, attribute, oldMode, oldNode.getPassword(), p);
+		case "size": newNode = new Splitter(oldAbsPath, attribute, oldMode, p);
+		case "parts": newNode = new Splitter(oldAbsPath, attribute, oldMode, p);
 		}
 		queue.set(idx, newNode);			
 	}
@@ -138,7 +140,7 @@ public class Queue{
 		if(i < getSize() && (!(getNode(i) == null)))
 			return queue.get(i).getAttribute();
 		return 0;
-		}
+	}
 	public String getType() {
 		return type;
 	}
@@ -147,15 +149,16 @@ public class Queue{
 	}
 
 	public void runAll() {
-		//creo un thread per ogni job
+		synchronized(this) {
+			p.setGlobalValue((100/getSize())+1);}
 		Thread nodeJobs[] = new Thread[getSize()];
 		for(int i = 0; i < getSize(); i++) {
 			nodeJobs[i] = new Thread((Runnable) getNode(i));
-			//aggiungere controlli percentuale
-		}
+			}
 		int i;
-		for(i = 0; i < getSize(); i++)
+		for(i = 0; i < getSize(); i++) {
 			nodeJobs[i].start();
+		}
 		queue.removeAllElements();
 	}
 }

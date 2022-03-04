@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import gui.PannelloFC;
 /**
  * @author rodhex
  * Classe che rappresenta la divisione di un oggetto semplice
@@ -16,9 +18,11 @@ import java.io.OutputStream;
 public class Splitter extends GeneralSplitter{
 	
 	private InputStream is;
+	private PannelloFC p;
 	
-	public Splitter(String absPathFile, long attribute, String splitMode) {
+	public Splitter(String absPathFile, long attribute, String splitMode, PannelloFC p) {
 		super(absPathFile, attribute, splitMode);
+		this.p = p;
 	}
 	/**metodo che legge i byte corrispondenti e li scrive in un nuovo chunk*/
 	public void readWriteChunk(InputStream inputStream, OutputStream os, int i)
@@ -73,10 +77,13 @@ public class Splitter extends GeneralSplitter{
 	}
 	@Override
 	public void run() {
-		try {
-			splitInChunks();
-		} catch (Exception e) {
-			e.printStackTrace();}
+		synchronized(this) {
+			try {
+				splitInChunks();
+			} catch (Exception e) {
+				e.printStackTrace();}
+			runDone();
+		}
 	}
 	@Override
 	public long getInputSizeChunks() {
@@ -110,5 +117,11 @@ public class Splitter extends GeneralSplitter{
 	@Override
 	public String getPassword() {
 		return null;}
+	@Override
+	public boolean runDone() {
+		synchronized(this) {
+			p.increaseValue(p.getGlobalValue());}
+		return true;
+	}
 	
 }

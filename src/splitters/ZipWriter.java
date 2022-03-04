@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import gui.PannelloFC;
+
 /**
  * @author rodhex
  * Classe che estende la classe padre zippando ogni chunk
@@ -15,9 +17,12 @@ import java.util.zip.ZipOutputStream;
 public class ZipWriter extends Splitter {
 
 	private ZipOutputStream zos;
+	private PannelloFC p;
 	
-	public ZipWriter(String absPathFile, long chunkSize, String splitMode) throws Exception{
-		super(absPathFile, chunkSize, splitMode);}
+	public ZipWriter(String absPathFile, long chunkSize,
+			String splitMode, PannelloFC p) throws Exception{
+		super(absPathFile, chunkSize, splitMode, p);
+		this.p = p;}
 
 /**zipChunk: metodo per zippare ogni parte in cui è stato diviso il file
  * @throws Exception*/
@@ -44,10 +49,16 @@ public class ZipWriter extends Splitter {
 	
 	@Override
 	public void run() {
+		synchronized(this) {
+		int oldGV = p.getGlobalValue();
+		p.setGlobalValue(p.getGlobalValue()/2);
 		super.run();
 		try {
 			zipChunk();
 		} catch (Exception e) {
 			e.printStackTrace();}
+		p.increaseValue(p.getGlobalValue());
+		p.setGlobalValue(oldGV);
+		}
 	}
 }
