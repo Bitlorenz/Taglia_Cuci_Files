@@ -19,13 +19,14 @@ public class Splitter extends GeneralSplitter{
 	
 	private InputStream is;
 	private PannelloFC p;
+	private int percentage;
 	
 	public Splitter(String absPathFile, long attribute, String splitMode, PannelloFC p) {
 		super(absPathFile, attribute, splitMode);
 		this.p = p;
 	}
 	/**metodo che legge i byte corrispondenti e li scrive in un nuovo chunk*/
-	public void readWriteChunk(InputStream inputStream, OutputStream os, int i)
+	public synchronized void readWriteChunk(InputStream inputStream, OutputStream os, int i)
 			throws Exception{
 		this.setInputStream(inputStream);
 		byte[] byteLetti;
@@ -41,7 +42,7 @@ public class Splitter extends GeneralSplitter{
 	}
 	/**splitInChunks: metodo per dividere il file in piccole parti
 	 * @throws Exception*/
-	public void splitInChunks() throws Exception {
+	public synchronized void splitInChunks() throws Exception {
 		int i = 0;
 		FileInputStream fis = new FileInputStream(getFileSrc());
 		long totChunks = getChunksTot();
@@ -52,6 +53,10 @@ public class Splitter extends GeneralSplitter{
 			FileOutputStream fout = new FileOutputStream(chunk);
 			readWriteChunk(fis, fout, i);
 			fout.close();
+			if((i % percentage) == 0) {
+				p.getProgressBar().setValue(p.getProgressBar().getValue() + 1);
+				System.out.println("Thread: "+Thread.currentThread().getName()+" valore progress bar: "+p.getProgressBar().getValue());
+			}
 		}
 		//getFileSrc().delete();
 	}
@@ -79,10 +84,11 @@ public class Splitter extends GeneralSplitter{
 	public void run() {
 		synchronized(this) {
 			try {
+				percentage = getChunksTot() / p.getGlobalValue();
 				splitInChunks();
 			} catch (Exception e) {
 				e.printStackTrace();}
-			runDone();
+			//p.getProgressBar().setValue(p.getProgressBar().getValue() + p.getGlobalValue());
 		}
 	}
 	@Override
@@ -117,11 +123,5 @@ public class Splitter extends GeneralSplitter{
 	@Override
 	public String getPassword() {
 		return null;}
-	@Override
-	public boolean runDone() {
-		synchronized(this) {
-			p.increaseValue(p.getGlobalValue());}
-		return true;
-	}
 	
 }

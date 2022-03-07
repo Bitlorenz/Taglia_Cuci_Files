@@ -215,7 +215,10 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		if(e.getSource() == esegui) {
 			if(q != null && q.getSize() > 0) {
 				progressBar.setValue(0);
-				q.runAll();
+				try {
+					q.runAll();
+				} catch (InterruptedException ie) {
+					ie.printStackTrace();}
 				mt.fireTableDataChanged();}
 		}
 		//modifica i parametri dei nodi

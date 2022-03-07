@@ -18,6 +18,7 @@ public class ZipWriter extends Splitter {
 
 	private ZipOutputStream zos;
 	private PannelloFC p;
+	private int percentage;
 	
 	public ZipWriter(String absPathFile, long chunkSize,
 			String splitMode, PannelloFC p) throws Exception{
@@ -26,7 +27,7 @@ public class ZipWriter extends Splitter {
 
 /**zipChunk: metodo per zippare ogni parte in cui è stato diviso il file
  * @throws Exception*/
-	private void zipChunk() throws Exception{
+	private synchronized void zipChunk() throws Exception{
 		int i;
 		long totChunks = getChunksTot();
 		for(i = 1; i <= totChunks; i++) {
@@ -44,7 +45,12 @@ public class ZipWriter extends Splitter {
 			zos.closeEntry();
 			zos.close();
 			fos.close();
-			new File(getDirDest().getAbsolutePath()+File.separator+chunkName).delete();}
+			new File(getDirDest().getAbsolutePath()+File.separator+chunkName).delete();
+			if((i % percentage) == 0) {
+				p.increaseValue(1);
+				System.out.println("Thread: "+Thread.currentThread().getName()+" valore progress bar: "+p.getProgressBar().getValue());
+			}
+		}
 	}
 	
 	@Override
@@ -52,12 +58,12 @@ public class ZipWriter extends Splitter {
 		synchronized(this) {
 		int oldGV = p.getGlobalValue();
 		p.setGlobalValue(p.getGlobalValue()/2);
+		percentage = getChunksTot() / p.getGlobalValue();
 		super.run();
 		try {
 			zipChunk();
 		} catch (Exception e) {
 			e.printStackTrace();}
-		p.increaseValue(p.getGlobalValue());
 		p.setGlobalValue(oldGV);
 		}
 	}
