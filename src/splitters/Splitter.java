@@ -11,9 +11,9 @@ import java.io.OutputStream;
 import gui.PannelloFC;
 /**
  * @author rodhex
+ * 
  * Classe che rappresenta la divisione di un oggetto semplice
  * ed offre supporto alle classi di zipping e crypting
- * TO-DO	chiamare splitInChunks, metodo run
  */
 public class Splitter extends GeneralSplitter{
 	
