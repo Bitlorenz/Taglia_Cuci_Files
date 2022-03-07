@@ -19,7 +19,7 @@ public class Splitter extends GeneralSplitter{
 	
 	private InputStream is;
 	private PannelloFC p;
-	private int percentage;
+	private int inc;
 	
 	public Splitter(String absPathFile, long attribute, String splitMode, PannelloFC p) {
 		super(absPathFile, attribute, splitMode);
@@ -53,10 +53,6 @@ public class Splitter extends GeneralSplitter{
 			FileOutputStream fout = new FileOutputStream(chunk);
 			readWriteChunk(fis, fout, i);
 			fout.close();
-			if((i % percentage) == 0) {
-				p.getProgressBar().setValue(p.getProgressBar().getValue() + 1);
-				System.out.println("Thread: "+Thread.currentThread().getName()+" valore progress bar: "+p.getProgressBar().getValue());
-			}
 		}
 		//getFileSrc().delete();
 	}
@@ -84,11 +80,10 @@ public class Splitter extends GeneralSplitter{
 	public void run() {
 		synchronized(this) {
 			try {
-				percentage = getChunksTot() / p.getGlobalValue();
 				splitInChunks();
 			} catch (Exception e) {
 				e.printStackTrace();}
-			//p.getProgressBar().setValue(p.getProgressBar().getValue() + p.getGlobalValue());
+			p.increaseValue(inc);
 		}
 	}
 	@Override
@@ -123,19 +118,11 @@ public class Splitter extends GeneralSplitter{
 	@Override
 	public String getPassword() {
 		return null;}
-<<<<<<< HEAD
-=======
 	@Override
-	public boolean runDone() {
-		synchronized(this) {
-			p.increaseValue(p.getGlobalValue());}
-		return true;
+	public void setInc(int inc) {
+		this.inc = inc;
 	}
-	@Override
-	public int setInc(int inc) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getInc() {
+		return this.inc;
 	}
->>>>>>> 890bc8da7571754d24103f3a04e212f5ae1e1111
-	
 }

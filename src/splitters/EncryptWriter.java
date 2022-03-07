@@ -13,6 +13,7 @@ public class EncryptWriter extends Splitter{
 	private String password;
 	private CipherOutputStream cos;
 	private PannelloFC p;
+	private int inc;
 	
 	public EncryptWriter(String absPathFile, long chunkSize, String splitMode,
 			String password, PannelloFC p) throws Exception{
@@ -50,15 +51,22 @@ public class EncryptWriter extends Splitter{
 	@Override
 	public void run() {
 		synchronized(this) {
-		int oldGV = p.getGlobalValue();
-		p.setGlobalValue(p.getGlobalValue()/2);
-		super.run();
-		try {
-			cryptChunks();
-		} catch (Exception e) {
-			e.printStackTrace();}
-		p.increaseValue(p.getGlobalValue());
-		p.setGlobalValue(oldGV);
+			super.setInc(getInc()/2);
+			super.run();
+			try {
+				setInc(getInc()/2 +1);
+				cryptChunks();
+			} catch (Exception e) {
+				e.printStackTrace();}
+			p.increaseValue(getInc());
 		}
+	}
+	public int getInc() {
+		return this.inc;
+	}
+
+	@Override
+	public void setInc(int inc) {
+		this.inc = inc;
 	}
 }

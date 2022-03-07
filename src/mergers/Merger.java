@@ -99,4 +99,10 @@ public class Merger extends GeneralMerger{
 	public int getAttribute() {
 		return 0;
 	}
+
+	@Override
+	public void setInc(int inc) {
+		// TODO Auto-generated method stub
+		
+	}
 }

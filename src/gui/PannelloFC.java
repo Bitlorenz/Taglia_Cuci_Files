@@ -35,7 +35,6 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 	private File[] inputFiles;
 	private int attribute;//dimChunk o partsChunk a seconda della modalità per singolo nodo
 	private int[] attributes;
-	private int globalValue;
 	private boolean stepNum;
 	private boolean stepSize;
 	
@@ -106,8 +105,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		add(southPanel, BorderLayout.SOUTH);
 		esegui = new JButton("Esegui");
 		esegui.addActionListener(this);
-		globalValue = 0;
-		progressBar = new JProgressBar(globalValue, 100);
+		progressBar = new JProgressBar(0, 100);
 		progressBar.setStringPainted(true);
 		progressBar.setBackground(Color.BLACK);
 		progressBar.setForeground(Color.GREEN);
@@ -386,13 +384,5 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 
 	public void setAttributes(int[] attributes) {
 		this.attributes = attributes;
-	}
-
-	public synchronized int getGlobalValue() {
-		return globalValue;
-	}
-
-	public synchronized void setGlobalValue(int globalValue) {
-		this.globalValue = globalValue;
 	}
 }

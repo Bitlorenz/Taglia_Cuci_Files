@@ -149,24 +149,20 @@ public class Queue{
 	}
 	
 	public void giveInc() {
+		int inc = 100/getSize();
 		for(int i=0; i < getSize(); i++) {
-			
+			queue.get(i).setInc(inc);
 		}
 	}
 
 	public void runAll() throws InterruptedException {
-		synchronized(this) {
-			if(getSize()%2 == 0)
-				p.setGlobalValue(100/getSize());
-			else
-				p.setGlobalValue((100/getSize())+1);}
+		giveInc();
 		Thread nodeJobs[] = new Thread[getSize()];
 		for(int i = 0; i < getSize(); i++) 
 			nodeJobs[i] = new Thread((Runnable) getNode(i));
 		int i;
 		for(i = 0; i < getSize(); i++) 
 			nodeJobs[i].start();
-			
 		queue.removeAllElements();
 	}
 }
