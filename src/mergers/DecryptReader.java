@@ -5,15 +5,20 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import javax.crypto.CipherOutputStream;
 
+import gui.PannelloFC;
+
 public class DecryptReader extends Merger{
 
 	private CryptoService cryptoService;
 	private CipherOutputStream cos;
+	private PannelloFC p;
+	private int inc;
 	
-	public DecryptReader(String firstChunkName, String password)
+	public DecryptReader(String firstChunkName, String password, PannelloFC p)
 			throws Exception{
-		super(firstChunkName, password);
+		super(firstChunkName, password, p);
 		this.cryptoService = new CryptoService(password, getNameDst(), "decrypt");
+		this.p = p;
 	}
 
 	public void decryptChunk() throws Exception {
@@ -38,10 +43,23 @@ public class DecryptReader extends Merger{
 
 	@Override
 	public void run() {
-		try {
-			decryptChunk();
-			super.run();
-		}catch(Exception e) {
-			e.printStackTrace();}
+		synchronized(this) {
+			this.setInc(getInc()/2 +1);
+			super.setInc(getInc() -1);
+			try {
+				decryptChunk();
+				super.run();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			p.increaseValue(getInc());
+		}
+	}
+	@Override
+	public void setInc(int inc) {
+		this.inc = inc;
+	}
+	public int getInc() {
+		return this.inc;
 	}
 }

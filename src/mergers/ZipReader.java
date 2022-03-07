@@ -6,12 +6,17 @@ import java.io.FileOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import gui.PannelloFC;
+
 public class ZipReader extends Merger{
 	
 	private ZipInputStream zis;
+	private PannelloFC p;
+	private int inc;
 	
-	public ZipReader(String absPathChunk) throws Exception{
-		super(absPathChunk, null);
+	public ZipReader(String absPathChunk, PannelloFC p) throws Exception{
+		super(absPathChunk, null, p);
+		this.p = p;
 	}
 
 	private void unzipChunk() throws Exception{
@@ -35,10 +40,22 @@ public class ZipReader extends Merger{
 	}
 	@Override
 	public void run() {
-		try {
+		synchronized(this) {
+			this.setInc(getInc()/2 +1);
+			super.setInc(getInc() -1);
+			try {
 			unzipChunk();
 			super.run();
 		} catch (Exception e) {
 			e.printStackTrace();}
+			p.increaseValue(getInc());
+		}
+	}
+	@Override
+	public void setInc(int inc) {
+		this.inc = inc;
+	}
+	public int getInc() {
+		return this.inc;
 	}
 }

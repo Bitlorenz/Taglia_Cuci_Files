@@ -6,17 +6,22 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import gui.PannelloFC;
+
 public class Merger extends GeneralMerger{
 	
 	private OutputStream os;
+	private PannelloFC p;
+	private int inc;
 
-	public Merger(String absPathChunk, String password) throws Exception {
+	public Merger(String absPathChunk, String password, PannelloFC p) throws Exception {
 		super(absPathChunk, password);
+		this.p = p;
 	}
 
-	/**metodo che unisce i chunks in un unico file
-	 * TO-DO: aggiungere lettura del resto(?)*/
-	public void readWriteChunk(InputStream is, OutputStream os) throws Exception{
+	/**metodo che unisce i chunks in un unico file*/
+	public synchronized void readWriteChunk(InputStream is, OutputStream os)
+			throws Exception{
 		this.setOs(os);
 		int chunkSizeInt;
 		byte[] byteLetti = null;
@@ -32,7 +37,7 @@ public class Merger extends GeneralMerger{
 			os.write(byteLetti, 0, val);}
 	}
 	
-	public void mergeAllChunks() throws Exception{
+	public synchronized void mergeAllChunks() throws Exception{
 		int i = 0;
 		String chunkName = getChunkName();
 		FileOutputStream fos = new FileOutputStream(getFileDst());
@@ -65,10 +70,13 @@ public class Merger extends GeneralMerger{
 
 	@Override
 	public void run() {
-		try {
-			mergeAllChunks();
-		}catch(Exception e) {
-			e.printStackTrace();}
+		synchronized(this){
+			try {
+				mergeAllChunks();
+			}catch(Exception e) {
+				e.printStackTrace();}
+			p.increaseValue(inc);
+		}
 	}
 
 	@Override
@@ -102,7 +110,9 @@ public class Merger extends GeneralMerger{
 
 	@Override
 	public void setInc(int inc) {
-		// TODO Auto-generated method stub
-		
+		this.inc = inc;
+	}
+	public int getInc() {
+		return this.inc;
 	}
 }

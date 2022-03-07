@@ -63,12 +63,12 @@ public class Queue{
 	public void addMergeNodes(File[] files, String passwd) throws Exception {
 		this.totFiles = files.length;
 		for(int i=0; i < totFiles; i++) {
-				queue.add(i, new Merger(files[i].getAbsolutePath(), passwd));
+				queue.add(i, new Merger(files[i].getAbsolutePath(), passwd, p));
 				if(getNode(i).getMode().equals("crypt")) {
-					INode newNode = new DecryptReader(files[i].getAbsolutePath(), passwd);
+					INode newNode = new DecryptReader(files[i].getAbsolutePath(), passwd, p);
 					queue.set(i, newNode);
 				}else if(getNode(i).getMode().equals("zip")) {
-					INode newNode = new ZipReader(files[i].getAbsolutePath());
+					INode newNode = new ZipReader(files[i].getAbsolutePath(), p);
 					queue.set(i, newNode);
 				}
 		}
