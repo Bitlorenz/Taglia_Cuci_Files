@@ -18,7 +18,11 @@ public class ZipWriter extends Splitter {
 
 	private ZipOutputStream zos;
 	private PannelloFC p;
+<<<<<<< HEAD
 	private int percentage;
+=======
+	private int inc;
+>>>>>>> 890bc8da7571754d24103f3a04e212f5ae1e1111
 	
 	public ZipWriter(String absPathFile, long chunkSize,
 			String splitMode, PannelloFC p) throws Exception{
@@ -66,5 +70,10 @@ public class ZipWriter extends Splitter {
 			e.printStackTrace();}
 		p.setGlobalValue(oldGV);
 		}
+	}
+	@Override
+	public int setInc(int inc) {
+		this.inc = inc;
+		return 0;
 	}
 }

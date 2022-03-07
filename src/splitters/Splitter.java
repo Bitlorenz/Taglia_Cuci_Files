@@ -123,5 +123,19 @@ public class Splitter extends GeneralSplitter{
 	@Override
 	public String getPassword() {
 		return null;}
+<<<<<<< HEAD
+=======
+	@Override
+	public boolean runDone() {
+		synchronized(this) {
+			p.increaseValue(p.getGlobalValue());}
+		return true;
+	}
+	@Override
+	public int setInc(int inc) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+>>>>>>> 890bc8da7571754d24103f3a04e212f5ae1e1111
 	
 }
