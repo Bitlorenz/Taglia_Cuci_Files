@@ -50,5 +50,6 @@ public interface INode{
 	
 	public String getPassword();
 	public void setAttribute(int attribute);
+	int setInc(int inc);
 
 }

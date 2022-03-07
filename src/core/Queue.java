@@ -147,6 +147,12 @@ public class Queue{
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public void giveInc() {
+		for(int i=0; i < getSize(); i++) {
+			
+		}
+	}
 
 	public void runAll() {
 		synchronized(this) {

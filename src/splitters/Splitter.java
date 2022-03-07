@@ -123,5 +123,10 @@ public class Splitter extends GeneralSplitter{
 			p.increaseValue(p.getGlobalValue());}
 		return true;
 	}
+	@Override
+	public int setInc(int inc) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }
