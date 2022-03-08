@@ -7,18 +7,31 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import gui.PannelloFC;
-
+/**
+ * @author rodhex
+ * Classe per unzippare e riunire i file divisi com la modalità di zipping
+ */
 public class ZipReader extends Merger{
 	
 	private ZipInputStream zis;
 	private PannelloFC p;
 	private int inc;
-	
+	/**
+	 * Costruttore della classe che chiama il costruttore della classe precedente
+	 * e inizializza il riferimento del pannello
+	 * @param absPathChunk il percorso assoluto del file
+	 * @param p il riferimento del pannello
+	 * @throws Exception
+	 */
 	public ZipReader(String absPathChunk, PannelloFC p) throws Exception{
-		super(absPathChunk, null, p);
+		super(absPathChunk, p);
 		this.p = p;
 	}
-
+	/**
+	 * Metodo che unzippa i files utilizzando un ZipInputStream e generando un
+	 * file in chiaro
+	 * @throws Exception
+	 */
 	private void unzipChunk() throws Exception{
 		int i;
 		String chunkName = getNameFirstFile();
@@ -38,6 +51,11 @@ public class ZipReader extends Merger{
 			chunkZip.delete();
 		}
 	}
+	/**
+	 * Metodo che unzippa e unisce i file, inizialmente imposta la sua quantità,
+	 * e del metodo padre per l'unione dei file, di incremento della percentuale
+	 * di avanzamento globale. Viene aggiunta al termine delle operazioni
+	 */
 	@Override
 	public void run() {
 		synchronized(this) {
@@ -51,10 +69,18 @@ public class ZipReader extends Merger{
 			p.increaseValue(getInc());
 		}
 	}
+	/**
+	 * Setter dell'incremento di questo oggetto, chiamato da Queue prima dello
+	 * start del thread corrispondente
+	 */
 	@Override
 	public void setInc(int inc) {
 		this.inc = inc;
 	}
+	/**
+	 * Getter dell'incremento delle operazioni di questo oggetto
+	 * @return this.inc l'incremento di questo oggetto
+	 */
 	public int getInc() {
 		return this.inc;
 	}

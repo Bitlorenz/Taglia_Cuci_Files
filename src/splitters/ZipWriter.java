@@ -10,17 +10,20 @@ import gui.PannelloFC;
 
 /**
  * @author rodhex
- * Classe che estende la classe padre zippando ogni chunk
- * To-Do: fare override del metodo per la divisione, viene chiamato super.run()[splitInChunks]
- * e all'interno c'è zipChunk
- */
+ * Classe che divide il file in diverse parti e zippa ogni chunk*/
 public class ZipWriter extends Splitter {
 
 	private ZipOutputStream zos;
 	private PannelloFC p;
 	private int inc;
-
-	
+	/**
+	 * Costruttore della classe che genera un oggetto ZipWriter
+	 * @param absPathFile percorso assoluto del file in input
+	 * @param chunkSize dimensione scelta dall'utente per ogni parte
+	 * @param splitMode modalità di divisione
+	 * @param p riferimento al pannello
+	 * @throws Exception
+	 */
 	public ZipWriter(String absPathFile, long chunkSize,
 			String splitMode, PannelloFC p) throws Exception{
 		super(absPathFile, chunkSize, splitMode, p);
@@ -50,7 +53,10 @@ public class ZipWriter extends Splitter {
 			new File(getDirDest().getAbsolutePath()+File.separator+chunkName).delete();
 		}
 	}
-	
+	/**
+	 * Metodo che unzippa e unisce i file, inizialmente imposta la sua, e del 
+	 * metodo padre per l'unione dei file, quantità di incremento della percentuale
+	 * di avanzamento globale. Viene aggiunta al termine delle operazioni*/
 	@Override
 	public void run() {
 		synchronized(this) {
@@ -64,10 +70,18 @@ public class ZipWriter extends Splitter {
 			p.increaseValue(getInc());
 		}
 	}
+	/**
+	 * Setter dell'incremento di questo oggetto, chiamato da Queue prima dello
+	 * start del thread corrispondente
+	 */
 	@Override
 	public void setInc(int inc) {
 		this.inc = inc;
 	}
+	/**
+	 * Getter dell'incremento delle operazioni di questo oggetto
+	 * @return this.inc l'incremento di questo oggetto
+	 */
 	public int getInc() {
 		return this.inc;
 	}

@@ -1,7 +1,5 @@
-package splitters;
+package core;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -13,25 +11,27 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
-
+/**
+ * @author rodhex
+ * Classe di servizio per permettere la cifratura e la decifratura
+ */
 public class CryptoService {
 
 	private static final String cipherInstance = "DES/ECB/PKCS5Padding";
 	private boolean ready;
 	private String mode;//crypt per crypting, decrypt per decrypting
 	private String password;
-	private String plainFileName;
-	private String absFilePathName;//usato per l'encrypt
 	private Cipher cipher;
 	private SecretKey desKey;
-	private FileInputStream fis;//fis: file stream sorgente, in chiaro, da cryptare
-	private FileOutputStream fos;//file destinazione decryptato
 	private CipherOutputStream cos;
-	
-	public CryptoService(String password, String absPathFile, String mode) {
+	/**
+	 * Costruttore dei servizi per la criptazione e decriptazione
+	 * @param password password data in input dall' utente per cifrare o decifrare il file
+	 * @param absPathFile percorso assoluto del file da cifrare o decifrare
+	 * @param mode può indicare la necessità di cifrare o decifrare
+	 */
+	public CryptoService(String password, String mode) {
 		this.password = password;
-		this.plainFileName = absPathFile.substring(absPathFile.lastIndexOf(File.separator)+1);
-		this.absFilePathName = absPathFile;
 		this.mode = mode;
 		this.ready = false;
 		try {
@@ -43,25 +43,25 @@ public class CryptoService {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * metodo invocato per preparare uno stream CipherOutputStream per la
+	 * decifrazione delle parti di file, partendo da un FileOutputStream e la e
+	 * un oggetto cipher inizializzato con la password
+	 * @throws Exception
+	 */
 	private void decryptServices() throws Exception{
-		if(!this.password.equals("password")) {
-			System.out.println("password errata");
-			return;
-		}
-		this.fos = new FileOutputStream(plainFileName);
 		this.desKey = makeKey();
 		this.cipher = makeCipher(desKey);
-		this.cos = new CipherOutputStream(fos, cipher);
 		this.ready = true;
 	}
 
-
+	/**
+	 * metodo invocato per preparare uno stream CipherOutputStream per la
+	 * cifratura delle parti di file
+	 * @throws Exception
+	 */
 	private void encryptServices() throws Exception{
-		this.fis = new FileInputStream(absFilePathName);
-		//creo la chiave
 		SecretKey key = makeKey();
-		//inizializzo il cipher in encrypt mode
 		this.cipher = makeCipher(key);
 		this.ready = true;
 	}
@@ -99,24 +99,24 @@ public class CryptoService {
 		}
 		return this.cipher;
 	}
-
-	public Cipher getCipher() {
-		return this.cipher;
-	}
-
-	public CipherOutputStream getCos(FileOutputStream fosDecr) {
+	/**
+	 * Getter per restituire l'ggetto CipherOutputStream creato dal cipher e
+	 * dall'oggetto FileOutputStream
+	 * @param fosDecr
+	 * @return
+	 */
+	public CipherOutputStream getCos(FileOutputStream fos) {
 		if(!ready) {
 			System.out.println("Crypto services non andati a buon fine");
 			return null;}
-		cos = new CipherOutputStream(fosDecr, cipher);
+		cos = new CipherOutputStream(fos, cipher);
 		return cos;
 	}
-
-	public void setCos(CipherOutputStream cos) {
-		this.cos = cos;
-	}
-
-	public FileInputStream getFis() {
-		return this.fis;
+    /**
+     * Getter per la password
+     * @return password
+     */
+	public String getPassword() {
+		return password;
 	}
 }

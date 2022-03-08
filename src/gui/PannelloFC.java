@@ -12,7 +12,10 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.io.File;
-
+/**
+ * @author rodhex
+ * Classe che implementa tutti i pannelli e la gui
+ */
 public class PannelloFC extends JPanel implements ActionListener, DocumentListener{
 
 	private static final long serialVersionUID = 1L;
@@ -127,7 +130,6 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		//AGGIUNGERE il controllo sugli step prima di dividere il file non sul file chooser
 		if(e.getSource()==scegliFile) {
 			fileChooser= new JFileChooser();
 			fileChooser.setMultiSelectionEnabled(true);
@@ -167,7 +169,6 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 				q.setType(this.getType());
 		}
 		//radioButton per dividere i file per dimensione
-		//AGGIUNGERE PSWDSETEDITABLEFALSE
 		if(e.getSource() == divDim) {
 			setType("Dividi");
 			dimChunk.setEnabled(true);
@@ -198,7 +199,6 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 			setModes(null);	
 		}
 		//radioButton per dividere i file con crypt
-		//TO-DO: IMPLEMENTARE RECUPERO PASSWORD
 		if(e.getSource() == divCrypt) {
 			setType("Dividi");
 			dimChunk.setEnabled(true);
@@ -259,7 +259,6 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		else if(owner == pswdTxt) {
 			if(!pswdTxt.getText().equals(""))
 				setPassword(pswdTxt.getText());}
-		//se si seleziona il file e poi si inserisce l'attributo
 		int idxNode = tab.getSelectedRow();
 		if(idxNode != -1) {
 			mt.setValueAt(attribute, idxNode, 2);
@@ -295,8 +294,8 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 	public boolean stepNumReady() {
 		stepNum=true;
 		return stepNum;}
-	//metodo per stabilire la larghezza delle colonne della tabella
-	//metodo statico per specificare la largehzza delle caselle di una colonna
+	/**metodo per stabilire la larghezza delle colonne della tabella
+	/*metodo statico per specificare la largehzza delle caselle di una colonna*/
 	public static void setTableColumnsWidth(JTable table) {
 		for(int i=0; i<table.getColumnModel().getColumnCount(); i++) {
 			TableColumn colonna = table.getColumnModel().getColumn(i);
@@ -339,7 +338,11 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 
 	public void setProgressBar(JProgressBar progressBar) {
 		this.progressBar = progressBar;}
-	
+	/**
+	 * metodo per incrementare il valore della progress bar che indica l'avanzamento
+	 * totale delle operazioni
+	 * @param value
+	 */
 	public synchronized void increaseValue(int value) {
 		progressBar.setValue(progressBar.getValue() + value);
 	}

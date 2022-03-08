@@ -21,7 +21,12 @@ public  abstract class GeneralSplitter implements INode, Runnable{
 	private String nameFileSrc, absPathFileSrc;
 	/**mode: modalità di splitting scelta dall'utente*/
 	private String mode;
-
+	/**
+	 * Costruttore che calcola tutti i parametri utili alla divisione
+	 * @param absPathFile percorso assoluto del file da dividere, in input
+	 * @param userInput dimensione o numero di parti in cui dividere
+	 * @param splitMode modalità di divisione
+	 */
 	public GeneralSplitter(String absPathFile, long userInput, String splitMode) {
 		setNameFileSrc(absPathFile.substring(absPathFile.lastIndexOf(File.separator)+1));
 		setAbsPathFileSrc(absPathFile.substring(0, absPathFile.lastIndexOf(File.separator)));
@@ -65,26 +70,43 @@ public  abstract class GeneralSplitter implements INode, Runnable{
 
 	public void setNameFileSrc(String nomeFile) {this.nameFileSrc = nomeFile;}
 
+	/**Stringa che indica la modalità di divisione del file
+	 * @return la stringa con la modalità*/
 	@Override
 	public String getMode() {return mode;}
-
+	/**
+	 * setter della modalità di unione 
+	 * @param mode
+	 */
 	public void setMode(String mode) {this.mode = mode;}
-
+	/**
+	 * getter del file sorgente
+	 * @return fileSrc
+	 */
 	public File getFileSrc() {return fileSrc;}
-
-	public void setFileSrc(File fileSrc) {this.fileSrc = fileSrc;}
-
-	public int getNumChunksInt() {return numChunksInt;}
-
+	/**
+	 * getter della dimensione della parte resto del file
+	 * @return
+	 */
 	public long getChunkSizeResto() {return chunkSizeResto;}
-
+	/**
+	 * setter della dimensione della parte resto del file
+	 * @param chunkSizeResto
+	 */
 	public void setChunkSizeResto(long chunkSizeResto) {
 		this.chunkSizeResto = chunkSizeResto;}
-
+	/**
+	 * getter del percorso assoluto del file sorgente
+	 * @return absPathFileSrc
+	 */
 	public String getAbsPathFileSrc() {return absPathFileSrc;}
-
+	/**
+	 * setter del percorso assoluto del file sorgente
+	 * @param absPathFileSrc
+	 */
 	public void setAbsPathFileSrc(String absPathFileSrc) {
 		this.absPathFileSrc = absPathFileSrc;}
+	/** metodo omonimo dell'interfaccia Runnable per i thread*/
 	@Override
 	public abstract void run();
 

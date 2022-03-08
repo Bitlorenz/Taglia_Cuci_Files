@@ -5,8 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import javax.crypto.CipherOutputStream;
 
+import core.CryptoService;
 import gui.PannelloFC;
-
+/**
+ * @author rodhex
+ * Classe decriptare le parti di un file e riunirle per ricreare il file originale
+ */
 public class DecryptReader extends Merger{
 
 	private CryptoService cryptoService;
@@ -14,13 +18,27 @@ public class DecryptReader extends Merger{
 	private PannelloFC p;
 	private int inc;
 	
+	/**
+	 * Costruttore che inizializza con i parametri in input
+	 * @param firstChunkName nome del file selezionato dall'utente, può essere 
+	 * il primo file diviso
+	 * @param password serve per inizializzare il cipher in modalità decrypt
+	 * @param p riferimento del pannello
+	 * @throws Exception
+	 */
 	public DecryptReader(String firstChunkName, String password, PannelloFC p)
 			throws Exception{
-		super(firstChunkName, password, p);
-		this.cryptoService = new CryptoService(password, getNameDst(), "decrypt");
+		super(firstChunkName, p);
+		this.cryptoService = new CryptoService(password, "decrypt");
 		this.p = p;
 	}
-
+	/**
+	 * Metodo che decripta una parte di file, la scrittura viene fatta usando un
+	 * oggetto CipherOutputStream inizializzato con un cipher di decrittazione,
+	 * insieme allo stream di lettura viene inviato al metodo per la lettura e
+	 * scrittura dalla parte di file al file intero 
+	 * @throws Exception
+	 */
 	public void decryptChunk() throws Exception {
 		int i;
 		String chunkName = getNameFirstFile();
@@ -40,7 +58,11 @@ public class DecryptReader extends Merger{
 			f.delete();
 		}		
 	}
-
+	/**
+	 * Metodo che decripta e unisce i file, inizialmente imposta la sua quantità,
+	 * e del metodo padre per l'unione dei file, di incremento della percentuale
+	 * di avanzamento globale. Viene aggiunta al termine delle operazioni
+	 */
 	@Override
 	public void run() {
 		synchronized(this) {
@@ -55,11 +77,25 @@ public class DecryptReader extends Merger{
 			p.increaseValue(getInc());
 		}
 	}
+	/**
+	 * Setter dell'incremento di questo oggetto, chiamato da Queue prima dello
+	 * start del thread corrispondente
+	 */
 	@Override
 	public void setInc(int inc) {
 		this.inc = inc;
 	}
+	/**
+	 * Getter dell'incremento delle operazioni di questo oggetto
+	 * @return this.inc l'incremento di questo oggetto
+	 */
 	public int getInc() {
 		return this.inc;
 	}
+	/**
+	 * Getter della password
+	 */
+	@Override
+	public String getPassword() {
+		return cryptoService.getPassword();}
 }

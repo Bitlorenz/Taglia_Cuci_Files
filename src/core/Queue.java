@@ -7,45 +7,28 @@ import java.util.Vector;
 import gui.PannelloFC;
 import splitters.*;
 import mergers.*;
-
+/**
+ * @author rodhex
+ * Classe che implementa la struttura dati coda, realizzata mediante un Vector
+ */
 public class Queue{
 	protected Vector<INode> queue;
 	private String type;
 	private PannelloFC p;
 	private int totFiles;
-	//metodo costruttore per inizializzare un oggetto coda vuoto 
+	/**metodo costruttore per inizializzare un oggetto coda vuoto*/ 
 	public Queue(PannelloFC pannelloFC) {
 		queue = new Vector<INode>(0);
 		p = pannelloFC;
 	}
-	
 	/**
-	 * costruttore della coda, crea una coda di file per essere divisi o uniti,
-	 * viene chiamato dall'oggetto JFileChooser, l'array di file dà la possibilità
-	 * di scegliere più file tutti alla volta
-	 * @param inputFiles, array di file scelti
-	 * @param mode: array delle modalità dei file scelti, uguale per tutti o vuota
-	 * per tutti, dipende se la modalità era già stata selezionata o no (stringa vuota)
-	 * @param nodeAttribute: può essere la dimensione di ogni parte in cui deve
-	 * essere diviso il file o il numero totali di parti in cui deve essere
-	 * diviso il file
-	 * @param type: tipologia di coda: per dividere o per unire
-	 * @throws Exception 
+	 * Metodo per aggiungere uno o più file di divisione alla coda
+	 * @param files array di file selezionati
+	 * @param mode modalità dei file selezionati
+	 * @param attribute dimensione o parti totali del file
+	 * @param passwd password se è stata scelta modalità cifratura
+	 * @throws Exception
 	 */
-	public Queue(File[] files, String type,String[] mode, int attribute, String passwd)
-			throws Exception {
-		this.totFiles = files.length;
-		this.setType(type);
-		queue = new Vector<INode>(totFiles);
-		if(type.equals("Dividi"))
-			addSplitNodes(files, mode, attribute, passwd);
-		else if(type.equals("Unisici"))
-			addMergeNodes(files, passwd);
-		
-	}
-	/*TO-DO:
-	 * invece di aggiungere tutti i file con un solo metodo, ogni file scelto viene aggiunto
-	 * tramite un metodo apposito che dipende dalla sua modalità*/
 	public void addSplitNodes(File[] files, String[] mode, int attribute,
 			String passwd) throws Exception {
 		this.totFiles = files.length;
@@ -59,11 +42,16 @@ public class Queue{
 		}
 		removeNull();
 	}
-	
+	/**
+	 * Metodo per aggiungere uno o più file di unione alla coda
+	 * @param files array di file che contiene le prime parti dei file da unire
+	 * @param passwd password dei file da unire
+	 * @throws Exception
+	 */
 	public void addMergeNodes(File[] files, String passwd) throws Exception {
 		this.totFiles = files.length;
 		for(int i=0; i < totFiles; i++) {
-				queue.add(i, new Merger(files[i].getAbsolutePath(), passwd, p));
+				queue.add(i, new Merger(files[i].getAbsolutePath(), p));
 				if(getNode(i).getMode().equals("crypt")) {
 					INode newNode = new DecryptReader(files[i].getAbsolutePath(), passwd, p);
 					queue.set(i, newNode);
@@ -74,7 +62,9 @@ public class Queue{
 		}
 		removeNull();
 	}
-	
+	/**
+	 * metodo di appoggio che rimuove eventuali oggetti nulli
+	 */
 	public void removeNull() {
 		queue.removeAll(Collections.singleton(null));
 	}
@@ -88,7 +78,12 @@ public class Queue{
 			for(int j = i; j < idxs.length; j++) 
 				idxs[j] -= 1;}		
 	}
-	
+	/**
+	 * Metodo per la modifica dell'attributo di un nodo 
+	 * @param idx indice del nodo
+	 * @param attribute nuovo attributo da assegnare al nodo
+	 * @throws Exception
+	 */
 	public void replaceNode(int idx, int attribute) throws Exception {
 		INode oldNode = getNode(idx);
 		String oldAbsPath = oldNode.getFileNode().getAbsolutePath();
@@ -102,10 +97,16 @@ public class Queue{
 		}
 		queue.set(idx, newNode);			
 	}
-	
+	/**
+	 * getter della coda
+	 * @return un riferimento all'oggetto coda corrente
+	 */
 	public Queue getQueue() {
 		return this;}
-	
+	/**
+	 * Getter della dimensione della coda
+	 * @return la dimensione della coda
+	 */
 	public int getSize() {
 		return queue.size();}
 	/**Serve per far apparire nella tabella il metodo di divisione scelto
@@ -122,8 +123,7 @@ public class Queue{
 		if(i < getSize() && (!(getNode(i) == null))) {
 			return queue.get(i).getNameNode();}
 		return null;	
-	}
-	
+	}	
 	/**Metodo per restituire un riferimento al nodo nella coda 
 	 * @param i: indice del nodo
 	 * @return un riferimento al nodo*/
@@ -141,20 +141,35 @@ public class Queue{
 			return queue.get(i).getAttribute();
 		return 0;
 	}
+	/**
+	 * getter del tipo di coda, per dividere o per unire 
+	 * @return type: stringa che indica il tipo della coda
+	 */
 	public String getType() {
 		return type;
 	}
+	/**
+	 * setter del tipo della coda
+	 * @param type indica il tipo della coda
+	 */
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+	/**
+	 * Metodo che assegna un certo valore di incremento delle operazioni ad
+	 * ogni nodo della coda
+	 */
 	public void giveInc() {
 		int inc = 100/getSize();
 		for(int i=0; i < getSize(); i++) {
 			queue.get(i).setInc(inc);
 		}
 	}
-
+	/**
+	 * metodo che esegue i nodi della coda dopo aver assegnato i valori di
+	 * incremento e alla fine rimuove gli elementi eseguiti dalla coda
+	 * @throws InterruptedException
+	 */
 	public void runAll() throws InterruptedException {
 		giveInc();
 		Thread nodeJobs[] = new Thread[getSize()];
