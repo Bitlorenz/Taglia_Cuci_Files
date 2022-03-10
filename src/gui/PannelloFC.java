@@ -23,7 +23,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 	private JTextField dimChunk, partsChunk, pswdTxt;
 	private JButton scegliFile, modificaFile, rimuoviFile;
 	private JButton esegui;
-	private JLabel dimLabel, numLabel, pswdLabel;
+	private JLabel dimLabel, numLabel, pswdLabel, mySign;
 	private JRadioButton unisci, divDim, divNum, divZip, divCrypt;
 	private JFileChooser fileChooser;
 	private JProgressBar progressBar;
@@ -38,8 +38,6 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 	private File[] inputFiles;
 	private int attribute;//dimChunk o partsChunk a seconda della modalità per singolo nodo
 	private int[] attributes;
-	private boolean stepNum;
-	private boolean stepSize;
 	
 	public PannelloFC() {
 		super();
@@ -52,7 +50,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		tab= new JTable(mt);
 		tab.setRowSelectionAllowed(true);
 		setTableColumnsWidth(tab);
-		centerPanel.add(tab);		
+		centerPanel.add(tab);
 
 		JPanel northPanel= new JPanel();
 		add(northPanel, BorderLayout.NORTH);
@@ -68,7 +66,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		pswdTxt.getDocument().putProperty("panel", pswdTxt);
 		pswdTxt.setEditable(false);
 		pswdTxt.getDocument().addDocumentListener(this);
-		dimLabel = new JLabel("Dimensione di ogni parte");
+		dimLabel = new JLabel("Dimensione in byte di ogni parte");
 		numLabel = new JLabel("Numero di parti totali");
 		pswdLabel = new JLabel("Password");
 		northPanel.add(dimLabel);
@@ -106,18 +104,22 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		
 		JPanel southPanel= new JPanel();
 		add(southPanel, BorderLayout.SOUTH);
+		southPanel.setLayout(new GridLayout(3,1));
 		esegui = new JButton("Esegui");
 		esegui.addActionListener(this);
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setStringPainted(true);
 		progressBar.setBackground(Color.BLACK);
 		progressBar.setForeground(Color.GREEN);
+		mySign = new JLabel("Designed and Coded by Lorenzo Lucchina");
 		southPanel.add(esegui);
 		southPanel.add(progressBar);
+		southPanel.add(mySign);
+		mySign.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		JPanel eastPanel= new JPanel();
 		add(eastPanel, BorderLayout.EAST);
-		eastPanel.setLayout(new GridLayout(4,1));
+		eastPanel.setLayout(new GridLayout(3,1));
 		scegliFile= new JButton("Scegli File");
 		scegliFile.addActionListener(this);
 		modificaFile= new JButton("Modifica");
@@ -138,8 +140,6 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				inputFiles = fileChooser.getSelectedFiles();
 				modes = new String[inputFiles.length];
-				if(inputFiles.length==0 || type==null || modes.length==0 || attribute == -1)
-					System.err.println("file selezionati 0, errore nel tipo, nella modalità, nell'attributo");
 				//se c'è già una modalità selezionata ma nessun file era ancora nella coda allora tutti i file prendono quella modalità
 				if(divDim.isSelected() || divNum.isSelected() ||
 						divZip.isSelected() || divCrypt.isSelected())
@@ -153,7 +153,7 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 					else if(getType().equals("Unisci")) 
 						q.addMergeNodes(inputFiles, password);
 				} catch (Exception e1) {
-					e1.printStackTrace();}
+					JOptionPane.showMessageDialog(new JFrame(), "controllare file selezionati, attributo o modalità", "ERRORE", JOptionPane.ERROR_MESSAGE);}
 				mt.fireTableDataChanged();
 			}
 		}
@@ -218,18 +218,27 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 				} catch (InterruptedException ie) {
 					ie.printStackTrace();}
 				mt.fireTableDataChanged();}
+			else {
+				JOptionPane.showMessageDialog(new JFrame(), "controllare file selezionati, attributo o modalità", "ERRORE", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		//modifica i parametri dei nodi
 		if(e.getSource() == modificaFile) {
 			if(q != null && q.getSize() > 0) {
 				int rowIdx = tab.getSelectedRow();
 				int newAttribute = 0;
-				if(dimChunk.isEnabled()) 
-					newAttribute = Integer.parseInt(dimChunk.getText());
-				else if (partsChunk.isEnabled()) 
-					newAttribute = Integer.parseInt(partsChunk.getText());
+				if(!(dimChunk.isEnabled() || partsChunk.isEnabled()))
+					JOptionPane.showMessageDialog(new JFrame(), "selezionare una modalità", "ERRORE", JOptionPane.ERROR_MESSAGE);
+				else {
+					if(dimChunk.isEnabled()) 
+						newAttribute = Integer.parseInt(dimChunk.getText());
+					else if (partsChunk.isEnabled()) 
+						newAttribute = Integer.parseInt(partsChunk.getText());}
 				try {
-					q.replaceNode(rowIdx, newAttribute);
+					if(newAttribute <= 0)
+						JOptionPane.showMessageDialog(new JFrame(), "nuovo attributo non valido", "ERRORE", JOptionPane.ERROR_MESSAGE);
+					else
+						q.replaceNode(rowIdx, newAttribute);
 				} catch (Exception e1) {
 					e1.printStackTrace();}
 				mt.fireTableDataChanged();
@@ -239,8 +248,12 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 		if(e.getSource()==rimuoviFile) {
 			if(q!=null && q.getSize()>0) {
 				int[] rows=tab.getSelectedRows();
-				q.removeNodes(rows);
-				mt.fireTableDataChanged();}
+				if(rows.length == 0)
+					JOptionPane.showMessageDialog(new JFrame(), "selezionare una riga della tabella", "ERRORE", JOptionPane.ERROR_MESSAGE);
+				else {
+					q.removeNodes(rows);
+					mt.fireTableDataChanged();}
+				}
 		}
 	}
 	@Override
@@ -286,14 +299,6 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 			q.getNode(idxNode).setAttribute(getAttribute());}
 		mt.fireTableDataChanged();
 	}
-	//controllo sul processo di divisione per dimensione
-	public boolean stepSizeReady() {
-		stepSize=true;
-		return stepSize;}
-	//controllo sul processo di divisione per numero di chunks
-	public boolean stepNumReady() {
-		stepNum=true;
-		return stepNum;}
 	/**metodo per stabilire la larghezza delle colonne della tabella
 	/*metodo statico per specificare la largehzza delle caselle di una colonna*/
 	public static void setTableColumnsWidth(JTable table) {
@@ -345,6 +350,10 @@ public class PannelloFC extends JPanel implements ActionListener, DocumentListen
 	 */
 	public synchronized void increaseValue(int value) {
 		progressBar.setValue(progressBar.getValue() + value);
+		if(progressBar.getValue() >= 99) {
+			progressBar.setValue(100);
+			progressBar.setString("Completato!");
+		}
 	}
 
 	public String getType() {
